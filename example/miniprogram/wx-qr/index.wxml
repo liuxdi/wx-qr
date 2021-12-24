@@ -1,0 +1,10 @@
+<image src="{{imgSrc}}" />
+<!-- 输出区 -->
+<canvas id="qr-out-container" class="qr-canvas" style="height: {{size}};width: {{size}};" type="2d"></canvas>
+<!-- 主绘制区 -->
+<canvas id="qr-main-container" height="100" width="100" class="qr-canvas" style="height: {{size}};width: {{size}};" type="2d"></canvas>
+<!-- 用于计算颜色均值 -->
+<canvas id="qr-bak-container" class="qr-canvas" style="height: {{size}};width: {{size}};" type="2d"></canvas>
+
+<!-- 绘制背景 -->
+<canvas id="qr-bg-container" class="qr-canvas" style="height: {{size}};width: {{size}};" type="2d"></canvas>

@@ -1,0 +1,5 @@
+<view>
+  <qr-code></qr-code>
+  <!-- <aaa></aaa> -->
+  <!-- <wx-qr></wx-qr> -->
+</view>

@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "qr-code": "../../wx-qr/index"
+  }
+}
