@@ -1,5 +1,3 @@
 <view>
-  <qr-code></qr-code>
-  <!-- <aaa></aaa> -->
-  <!-- <wx-qr></wx-qr> -->
+  <qr-code bgSrc="/image/bg.webp" size="500rpx" logoSrc="/image/logo.jpeg"></qr-code>
 </view>

@@ -1,10 +1,10 @@
 // import { Canvas, CanvasRenderingContext2D, Image, loadImage } from "skia-canvas";
 import { canvasContainer } from "../type";
+import { loadImage, resetCanvasHeighAndWidth } from "../util";
 import { QRCodeModel, QRErrorCorrectLevel, QRUtil } from "./qrcode";
 type Canvas = WechatMiniprogram.Canvas;
 type CanvasRenderingContext2D = WechatMiniprogram.CanvasContext
 const defaultScale = 0.4;
-
 export type ComponentOptions = {
   /**
    * Component options for data/ECC.
@@ -367,7 +367,7 @@ export class AwesomeQR {
     canvasContext.closePath();
   }
 
-  private static _getAverageRGB(image: Image, options: AwesomeQR["options"]) {
+  private static _getAverageRGB(image: WechatMiniprogram.Image, options: AwesomeQR["options"]) {
     const blockSize = 5;
     const defaultRGB = {
       r: 0,
@@ -382,13 +382,14 @@ export class AwesomeQR {
       b: 0,
     };
     let count = 0;
+    console.log(image);
 
     height = image.naturalHeight || image.height;
     width = image.naturalWidth || image.width;
-
     // const canvas = new Canvas(width, height);
     const canvas = options.canvasContainer!.qrBakContainer
     const context = canvas.getContext("2d");
+    resetCanvasHeighAndWidth(canvas, Math.min(height, width), false);
 
     if (!context) {
       return defaultRGB;
@@ -475,7 +476,7 @@ export class AwesomeQR {
     canvasContext.fillStyle = oldFillStyle;
   }
 
-  private async _draw(): Promise<Buffer | Uint8Array | string | undefined> {
+  private async _draw(): Promise<string | undefined> {
     const nCount = this.qrCode?.moduleCount!;
     const rawSize = this.options.size!;
     let rawMargin = this.options.margin!;
@@ -506,9 +507,8 @@ export class AwesomeQR {
     // const backgroundCanvas = new Canvas(size, size);
     const backgroundCanvas = this.options.canvasContainer!.qrBgContainer;
     const backgroundCanvasContext = backgroundCanvas.getContext("2d");
-
     if (!!this.options.backgroundImage) {
-      const backgroundImage = await loadImage(this.options.backgroundImage!);
+      const backgroundImage = await loadImage(backgroundCanvas, this.options.backgroundImage!);
 
       if (this.options.autoColor) {
         const avgRGB = AwesomeQR._getAverageRGB(backgroundImage, this.options);
@@ -534,7 +534,6 @@ export class AwesomeQR {
       backgroundCanvasContext.fillStyle = this.options.colorLight!;
       backgroundCanvasContext.fill();
     }
-
     const alignmentPatternCenters = QRUtil.getPatternPosition(this.qrCode!.typeNumber);
 
     const dataScale = this.options.components?.data?.scale || defaultScale;
@@ -594,7 +593,6 @@ export class AwesomeQR {
     mainCanvasContext.fillRect(0, 0, 8 * nSize, 8 * nSize);
     mainCanvasContext.fillRect(0, (nCount - 8) * nSize, 8 * nSize, 8 * nSize);
     mainCanvasContext.fillRect((nCount - 8) * nSize, 0, 8 * nSize, 8 * nSize);
-
     // - TIMING PROTECTORS
     if (this.options.components?.timing?.protectors) {
       mainCanvasContext.fillRect(8 * nSize, 6 * nSize, (nCount - 8 - 8) * nSize, nSize);
@@ -702,9 +700,10 @@ export class AwesomeQR {
       mainCanvasContext.fillRect(viewportSize, -margin, margin, size);
       mainCanvasContext.fillRect(-margin, -margin, margin, size);
     }
+    mainCanvasContext.lineTo(1, 1, 10, 10)
 
     if (!!this.options.logoImage) {
-      const logoImage = await loadImage(this.options.logoImage!);
+      const logoImage = await loadImage(mainCanvas, this.options.logoImage!);
 
       let logoScale = this.options.logoScale!;
       let logoMargin = this.options.logoMargin!;
@@ -722,7 +721,6 @@ export class AwesomeQR {
       const logoSize = viewportSize * logoScale;
       const x = 0.5 * (size - logoSize);
       const y = x;
-
       // Restore the canvas
       // After restoring, the top and left margins should be taken into account
       mainCanvasContext.restore();
@@ -738,6 +736,7 @@ export class AwesomeQR {
         logoSize + 2 * logoMargin,
         logoCornerRadius + logoMargin
       );
+
       mainCanvasContext.clip();
       const oldGlobalCompositeOperation = mainCanvasContext.globalCompositeOperation;
       mainCanvasContext.globalCompositeOperation = "destination-out";
@@ -756,44 +755,22 @@ export class AwesomeQR {
       mainCanvasContext.save();
       mainCanvasContext.translate(margin, margin);
     }
-
-    const mainCanvasImg = await wx.canvasToTempFilePath({ canvas: mainCanvas })
-
+    console.log(size, rawSize, margin);
 
     // Swap and merge the foreground and the background
-    backgroundCanvasContext.drawImage(mainCanvasImg, 0, 0, size, size);
+    backgroundCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, size, size);
     mainCanvasContext.drawImage(backgroundCanvas.getContext("2d").canvas, -margin, -margin, size, size);
 
     // Scale the final image
     // const outCanvas = new Canvas(rawSize, rawSize); //document.createElement("canvas");
     const outCanvas = this.options.canvasContainer!.qrOutContainer
     const outCanvasContext = outCanvas.getContext("2d");
-    outCanvasContext.drawImage(mainCanvasImg, 0, 0, rawSize, rawSize);
+    outCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, rawSize, rawSize);
     this.canvas = outCanvas;
 
-    const format = "png";
 
-    if (isElement(this.canvas)) {
-      return Promise.resolve(this.canvas.toDataURL(format));
-    }
+    const format = "image/webp";
 
-    return Promise.resolve(this.canvas.toBuffer(format));
-  }
-}
-
-function isElement(obj: any): boolean {
-  try {
-    //Using W3 DOM2 (works for FF, Opera and Chrome)
-    return obj instanceof HTMLElement;
-  } catch (e) {
-    //Browsers not supporting W3 DOM2 don't have HTMLElement and
-    //an exception is thrown and we end up here. Testing some
-    //properties that all elements have (works on IE7)
-    return (
-      typeof obj === "object" &&
-      obj.nodeType === 1 &&
-      typeof obj.style === "object" &&
-      typeof obj.ownerDocument === "object"
-    );
+    return Promise.resolve(this.canvas.toDataURL(format, 1));
   }
 }

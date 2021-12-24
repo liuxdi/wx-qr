@@ -1,6 +1,6 @@
 import { AwesomeQR } from "./lib/index";
-import {qrTypes} from "./type";
-import { COMPONENT_NAME, DEFAULT_SIZE } from "./util";
+import { qrTypes } from "./type";
+import { COMPONENT_NAME, DEFAULT_SIZE, getPxFromRpx, resetCanvasHeighAndWidth } from "./util";
 
 function toBoolean(data: any) {
     return Boolean(data)
@@ -28,18 +28,13 @@ Component({
     },
     // : [WechatMiniprogram.Canvas, WechatMiniprogram.CanvasContext] 
     methods: {
-        getCanvasAndContext(): Promise<WechatMiniprogram.Canvas[]> {
+        getCanvasAndContext(size: number): Promise<WechatMiniprogram.Canvas[]> {
             return new Promise((reslove, reject) => {
                 try {
                     const query = this.createSelectorQuery();
                     query.selectAll('.qr-canvas').fields({ node: true, size: true, id: true }).exec(res => {
                         const canvasList = res[0].map(((item: { node: WechatMiniprogram.Canvas; }) => {
-                            const canvas: WechatMiniprogram.Canvas = item.node;
-                            const ctx: WechatMiniprogram.CanvasContext = canvas.getContext('2d');
-                            const dpr = wx.getSystemInfoSync().pixelRatio
-                            canvas.width = res[0].width * dpr
-                            canvas.height = res[0].height * dpr
-                            ctx.scale(dpr, dpr);
+                            const canvas: WechatMiniprogram.Canvas = resetCanvasHeighAndWidth(item.node, size);
                             return canvas
                         }))
                         reslove(canvasList)
@@ -51,7 +46,6 @@ Component({
             })
         },
         async render(): Promise<void> {
-            const [qrOutContainer, qrMainContainer, qrBakContainer, qrBgContainer] = await this.getCanvasAndContext();
             const {
                 text,
                 size,
@@ -66,21 +60,51 @@ Component({
                 logoMargin,
                 logoCornerRadius,
                 dotScale,
-                bgImg,
+                bgSrc,
                 logoSrc,
                 whiteMargin,
                 autoColor,
             } = this.data;
+            let reg = new RegExp(/\d+(px|rpx)$/g);
+            if (!reg.test(size)) {
+                console.error('传入的数值非px或rpx，默认按rpx进行处理')
+            }
+            let pxSize = Number(size.replace(/px|rpx/g, ''));
+            if (size.endsWith('rpx')) {
+                pxSize = getPxFromRpx(pxSize)
+            }
+            const [qrOutContainer, qrMainContainer, qrBakContainer, qrBgContainer] = await this.getCanvasAndContext(pxSize);
+            // console.log(qrMainContainer);
+            // const context: WechatMiniprogram.CanvasContext = qrMainContainer.getContext('2d');
+            // context.beginPath();
+            // context.strokeStyle = "#000000";
+            // context.lineWidth = 4;
+            // context.lineTo(100, 100);
+            // context.lineTo(0, 100);
+            // context.lineTo(0, 0);
+            // context.fill();
+            // context.closePath();
+            // context.stroke();
+
+            // wx.canvasToTempFilePath({ canvas: qrMainContainer }).then(rsp => {
+            //     console.log(rsp);
+
+            // }).catch(e => {
+            //     console.log(e);
+
+            // })
+
+            // return
 
 
             new AwesomeQR({
                 text: text,
-                size: size,
+                size: pxSize,
                 margin: margin,
                 colorDark: colorDark,
-                colorLight: colorLight,
+                colorLight: '#ff00ff' || colorLight,
                 // backgroundColor: backgroundColor,
-                backgroundImage: bgImg,
+                backgroundImage: bgSrc,
                 backgroundDimming: backgroundDimming,
                 logoImage: logoSrc,
                 logoScale: logoScale,
@@ -94,6 +118,9 @@ Component({
                 canvasContainer: { qrOutContainer, qrMainContainer, qrBakContainer, qrBgContainer }
             }).draw().then(rsp => {
                 console.log(rsp)
+                this.setData({
+                    imgSrc: rsp
+                })
             }).catch(err => {
                 console.log(err);
 

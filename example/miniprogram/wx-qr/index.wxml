@@ -1,4 +1,4 @@
-<image src="{{imgSrc}}" />
+<image src="{{imgSrc}}" style="height: {{size}};width: {{size}};" />
 <!-- 输出区 -->
 <canvas id="qr-out-container" class="qr-canvas" style="height: {{size}};width: {{size}};" type="2d"></canvas>
 <!-- 主绘制区 -->

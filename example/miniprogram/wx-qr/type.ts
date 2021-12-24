@@ -15,6 +15,7 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     },
     correctLevel: {
         type: Number,
+        value: 0
     },
     size: {
         type: String,
