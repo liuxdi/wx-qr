@@ -1,0 +1,24 @@
+{
+  "setting": {},
+  "condition": {
+    "plugin": {
+      "list": []
+    },
+    "game": {
+      "list": []
+    },
+    "gamePlugin": {
+      "list": []
+    },
+    "miniprogram": {
+      "list": [
+        {
+          "name": "wx-qr/index",
+          "pathName": "wx-qr/index",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

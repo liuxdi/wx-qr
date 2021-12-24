@@ -1,3 +1,4 @@
 <view>
-  <qr-code bgSrc="/image/bg.webp" size="500rpx" logoSrc="/image/logo.jpeg"></qr-code>
+  <qr-code text="https://gitee.com/liu_di/wx-qr" bgSrc="/image/bg.jpeg" logoMargin="10" components="{{ComponentOptions}}" size="500rpx" logoSrc="/image/logo.jpeg"></qr-code>
+  <!-- <qr-code bgSrc="/image/bg.jpeg" colorLight="#ff00ff" size="500rpx" logoSrc="/image/logo.jpeg"></qr-code> -->
 </view>

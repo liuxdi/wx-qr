@@ -167,7 +167,7 @@ export type Options = {
    *
    * @defaultValue undefined
    */
-  backgroundImage?: string | Buffer;
+  backgroundImage?: string;
 
   /**
    * Color of the dimming mask above the background image.
@@ -203,7 +203,7 @@ export type Options = {
    *
    * @defaultValue undefined
    */
-  logoImage?: string | Buffer;
+  logoImage?: string;
 
   /**
    * Ratio of the logo size to the QR code size.
@@ -237,7 +237,6 @@ export type Options = {
    */
   dotScale?: number;
   /**
-   * @deprecated
    *
    * 由于微信不能直接通过createElement生成canvas,目前通过传参形式进行
    *
@@ -317,6 +316,7 @@ export class AwesomeQR {
         }
       });
     }
+    console.log(_options.components);
 
     if (_options.dotScale !== null && _options.dotScale !== undefined) {
       if (_options.dotScale! <= 0 || _options.dotScale! > 1) {
@@ -342,7 +342,7 @@ export class AwesomeQR {
     this.qrCode.make();
   }
 
-  draw(): Promise<Buffer | ArrayBuffer | string | undefined> {
+  draw(): Promise<string | undefined> {
     return new Promise((resolve) => this._draw().then(resolve));
   }
 
@@ -383,10 +383,10 @@ export class AwesomeQR {
     };
     let count = 0;
     console.log(image);
-
+    //  @ts-ignore
     height = image.naturalHeight || image.height;
+    //  @ts-ignore
     width = image.naturalWidth || image.width;
-    // const canvas = new Canvas(width, height);
     const canvas = options.canvasContainer!.qrBakContainer
     const context = canvas.getContext("2d");
     resetCanvasHeighAndWidth(canvas, Math.min(height, width), false);
@@ -535,9 +535,10 @@ export class AwesomeQR {
       backgroundCanvasContext.fill();
     }
     const alignmentPatternCenters = QRUtil.getPatternPosition(this.qrCode!.typeNumber);
-
     const dataScale = this.options.components?.data?.scale || defaultScale;
     const dataXyOffset = (1 - dataScale) * 0.5;
+    console.log(dataXyOffset);
+    
     for (let row = 0; row < nCount; row++) {
       for (let col = 0; col < nCount; col++) {
         const bIsDark = this.qrCode!.isDark(row, col);
@@ -765,12 +766,23 @@ export class AwesomeQR {
     // const outCanvas = new Canvas(rawSize, rawSize); //document.createElement("canvas");
     const outCanvas = this.options.canvasContainer!.qrOutContainer
     const outCanvasContext = outCanvas.getContext("2d");
+
     outCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, rawSize, rawSize);
     this.canvas = outCanvas;
+    return new Promise((reslove, reject) => {
+      wx.canvasToTempFilePath({
+        canvas: outCanvas,
+        destWidth: outCanvas.width,
+        destHeight: outCanvas.height
+      }).then(rsp => {
+        reslove(rsp.tempFilePath)
+      }).catch(err => {
+        console.error('canvasToTempFilePath 失败', err);
+        reject(err)
+      })
+    })
 
 
-    const format = "image/webp";
-
-    return Promise.resolve(this.canvas.toDataURL(format, 1));
+    // Promise.resolve(this.canvas.toDataURL(format, 1));
   }
 }

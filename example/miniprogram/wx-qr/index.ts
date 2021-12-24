@@ -64,6 +64,7 @@ Component({
                 logoSrc,
                 whiteMargin,
                 autoColor,
+                components
             } = this.data;
             let reg = new RegExp(/\d+(px|rpx)$/g);
             if (!reg.test(size)) {
@@ -73,6 +74,8 @@ Component({
             if (size.endsWith('rpx')) {
                 pxSize = getPxFromRpx(pxSize)
             }
+            console.log(dotScale);
+
             const [qrOutContainer, qrMainContainer, qrBakContainer, qrBgContainer] = await this.getCanvasAndContext(pxSize);
             // console.log(qrMainContainer);
             // const context: WechatMiniprogram.CanvasContext = qrMainContainer.getContext('2d');
@@ -102,19 +105,18 @@ Component({
                 size: pxSize,
                 margin: margin,
                 colorDark: colorDark,
-                colorLight: '#ff00ff' || colorLight,
-                // backgroundColor: backgroundColor,
+                colorLight: colorLight,
                 backgroundImage: bgSrc,
                 backgroundDimming: backgroundDimming,
                 logoImage: logoSrc,
                 logoScale: logoScale,
-                // logoBackgroundColor: logoBackgroundColor,
                 correctLevel: correctLevel,
                 logoMargin: logoMargin,
                 logoCornerRadius: logoCornerRadius,
                 whiteMargin: toBoolean(whiteMargin),
                 dotScale: dotScale,
                 autoColor: toBoolean(autoColor),
+                components: components,
                 canvasContainer: { qrOutContainer, qrMainContainer, qrBakContainer, qrBgContainer }
             }).draw().then(rsp => {
                 console.log(rsp)

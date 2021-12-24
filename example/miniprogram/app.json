@@ -1,7 +1,7 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs"
+    "wx-qr/index"
   ],
   "window": {
     "backgroundTextStyle": "light",

@@ -3,7 +3,7 @@ export const DEFAULT_SIZE = "200rpx";
 
 export function getPxFromRpx(rpx: number): number {
   const screenWidth = wx.getSystemInfoSync()['screenWidth'];
-  return Math.floor(rpx * screenWidth / 750);
+  return Math.round(rpx * screenWidth / 750);
 }
 
 export function loadImage(canvas: WechatMiniprogram.Canvas, imgSrc: string): Promise<WechatMiniprogram.Image> {
