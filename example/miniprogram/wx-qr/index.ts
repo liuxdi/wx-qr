@@ -83,7 +83,7 @@ Component({
             }
             console.log(dotScale);
 
-            const [qrMainContainer, qrBgContainer] = await this.getCanvasAndContext(pxSize);
+            const [qrMainContainer] = await this.getCanvasAndContext(pxSize);
             let option: Options = {
                 text: text,
                 size: pxSize,
@@ -101,7 +101,7 @@ Component({
                 dotScale: dotScale,
                 autoColor: toBoolean(autoColor),
                 components: components,
-                canvasContainer: { qrMainContainer, qrBgContainer }
+                canvasContainer: { qrMainContainer }
             };
             if (!this.data.qrDraw) {
                 this.data.qrDraw = new AwesomeQR(option);

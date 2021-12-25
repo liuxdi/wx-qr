@@ -2,7 +2,6 @@ import { DEFAULT_SIZE } from "./util";
 import type { ComponentOptions } from './lib/awesome-qr'
 export enum canvasContainer {
     qrMainContainer = 'qrMainContainer',
-    qrBgContainer = 'qrBgContainer',
 }
 export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     text: {

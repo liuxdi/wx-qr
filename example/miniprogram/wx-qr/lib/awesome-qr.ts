@@ -373,7 +373,29 @@ export class AwesomeQR {
     canvasContext.arcTo(x, y, x + w, y, r);
     canvasContext.closePath();
   }
+  private static _prepareRoundedCornerClipReverse(
+    canvasContext: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    r: number,
+    size: number
+  ) {
+    canvasContext.beginPath();
+    canvasContext.lineTo(0, 0);
+    canvasContext.lineTo(0, size);
+    canvasContext.lineTo(size, size);
+    canvasContext.lineTo(size, 0);
+    canvasContext.lineTo(0, 0);
 
+    canvasContext.lineTo(x, y);
+    canvasContext.arcTo(x + w, y, x + w, y + h, r);
+    canvasContext.arcTo(x + w, y + h, x, y + h, r);
+    canvasContext.arcTo(x, y + h, x, y, r);
+    canvasContext.arcTo(x, y, x + w, y, r);
+    canvasContext.closePath();
+  }
   private static _getAverageRGB(image: WechatMiniprogram.Image, options: AwesomeQR["options"]) {
     const blockSize = 5;
     const defaultRGB = {
@@ -393,7 +415,7 @@ export class AwesomeQR {
     height = image.naturalHeight || image.height;
     //  @ts-ignore
     width = image.naturalWidth || image.width;
-    const canvas = options.canvasContainer!.qrBgContainer
+    const canvas = options.canvasContainer!.qrMainContainer
     const context = canvas.getContext("2d");
 
     if (!context) {
@@ -493,14 +515,14 @@ export class AwesomeQR {
 
     const whiteMargin = this.options.whiteMargin!;
     const backgroundDimming = this.options.backgroundDimming!;
-    const nSize = getRoundNum(rawViewportSize / nCount, 1)
+    const nSize = getRoundNum(rawViewportSize / nCount, 3)
     const viewportSize = nSize * nCount;
-    let size = getRoundNum(viewportSize + 2 * margin, 1);
+    let size = getRoundNum(viewportSize + 2 * margin, 3);
 
     // console.log({ rawViewportSize, size, correctLevel: this.options.correctLevel, nCount })
     // const mainCanvas = new Canvas(size, size);
     const mainCanvas = this.options.canvasContainer!.qrMainContainer;
-    const mainCanvasContext = mainCanvas.getContext("2d");
+    const mainCanvasContext: WechatMiniprogram.CanvasContext = mainCanvas.getContext("2d");
 
     this._clear();
 
@@ -509,12 +531,13 @@ export class AwesomeQR {
     mainCanvasContext.translate(margin, margin);
 
     // const backgroundCanvas = new Canvas(size, size);
-    const backgroundCanvas = this.options.canvasContainer!.qrBgContainer;
-    const backgroundCanvasContext = backgroundCanvas.getContext("2d");
+    const backgroundCanvas = this.options.canvasContainer!.qrMainContainer;
+    const backgroundCanvasContext: WechatMiniprogram.CanvasContext = backgroundCanvas.getContext("2d");
+    let backgroundImage: WechatMiniprogram.Image | undefined;
     if (!!this.options.backgroundImage) {
-      const backgroundImage = await loadImage(backgroundCanvas, this.options.backgroundImage!);
-
+      backgroundImage = await loadImage(backgroundCanvas, this.options.backgroundImage!);
       backgroundCanvasContext.drawImage(
+        // @ts-ignore
         backgroundImage,
         0,
         0,
@@ -540,7 +563,32 @@ export class AwesomeQR {
     const alignmentPatternCenters = QRUtil.getPatternPosition(this.qrCode!.typeNumber);
     const dataScale = this.options.components?.data?.scale || defaultScale;
     const dataXyOffset = (1 - dataScale) * 0.5;
-    console.log(dataXyOffset);
+
+    const oldGlobalCompositeOperation = mainCanvasContext.globalCompositeOperation;
+    // 提前预备好logo margin的空
+    if (!!this.options.logoImage && this.options.logoMargin) {
+      let logoMargin = this.options.logoMargin!;
+      let logoScale = this.options.logoScale!;
+      let logoCornerRadius = this.options.logoCornerRadius!;
+      const logoSize = viewportSize * logoScale;
+      const x = 0.5 * (size - logoSize);
+      const y = x;
+      mainCanvasContext.save();
+      AwesomeQR._prepareRoundedCornerClipReverse(
+        mainCanvasContext,
+        x - logoMargin,
+        y - logoMargin,
+        logoSize + 2 * logoMargin,
+        logoSize + 2 * logoMargin,
+        logoCornerRadius + logoMargin,
+        size
+      );
+      mainCanvasContext.fill();
+      // return
+      // mainCanvasContext.globalCompositeOperation = "destination-over";
+      mainCanvasContext.clip();
+    }
+
 
     for (let row = 0; row < nCount; row++) {
       for (let col = 0; col < nCount; col++) {
@@ -586,6 +634,8 @@ export class AwesomeQR {
         }
       }
     }
+    mainCanvasContext.globalCompositeOperation = oldGlobalCompositeOperation;
+    // return
 
     const cornerAlignmentCenter = alignmentPatternCenters[alignmentPatternCenters.length - 1];
 
@@ -653,7 +703,6 @@ export class AwesomeQR {
       AwesomeQR._drawDot(mainCanvasContext, 8 + i, 6, nSize, timingXyOffset, timingScale);
       AwesomeQR._drawDot(mainCanvasContext, 6, 8 + i, nSize, timingXyOffset, timingScale);
     }
-
     // - CORNER ALIGNMENT PROTECTORS
     const cornerAlignmentScale = this.options.components?.cornerAlignment?.scale || defaultScale;
     const cornerAlignmentXyOffset = (1 - cornerAlignmentScale) * 0.5;
@@ -695,7 +744,6 @@ export class AwesomeQR {
         }
       }
     }
-
     // Fill the margin
     if (whiteMargin) {
       mainCanvasContext.fillStyle = "#FFFFFF";
@@ -704,7 +752,7 @@ export class AwesomeQR {
       mainCanvasContext.fillRect(viewportSize, -margin, margin, size);
       mainCanvasContext.fillRect(-margin, -margin, margin, size);
     }
-    mainCanvasContext.lineTo(1, 1, 10, 10)
+    // mainCanvasContext.lineTo(1, 1, 10, 10)
 
     if (!!this.options.logoImage) {
       const logoImage = await loadImage(mainCanvas, this.options.logoImage!);
@@ -730,7 +778,7 @@ export class AwesomeQR {
       mainCanvasContext.restore();
 
       // Clean the area that the logo covers (including margins)
-      mainCanvasContext.fillStyle = "#FFFFFF";
+      // mainCanvasContext.fillStyle = "#FFFFFF";
       mainCanvasContext.save();
       AwesomeQR._prepareRoundedCornerClip(
         mainCanvasContext,
@@ -740,7 +788,6 @@ export class AwesomeQR {
         logoSize + 2 * logoMargin,
         logoCornerRadius + logoMargin
       );
-
       mainCanvasContext.clip();
       const oldGlobalCompositeOperation = mainCanvasContext.globalCompositeOperation;
       mainCanvasContext.globalCompositeOperation = "destination-out";
@@ -748,10 +795,29 @@ export class AwesomeQR {
       mainCanvasContext.globalCompositeOperation = oldGlobalCompositeOperation;
       mainCanvasContext.restore();
 
+      // 绘制logo边缘背景图
+      // if (logoMargin && backgroundImage) {
+      // mainCanvasContext.clip();
+      //   mainCanvasContext.drawImage(
+      //     // @ts-ignore
+      //     backgroundImage,
+      //     x - logoMargin,
+      //     y - logoMargin,
+      //     logoSize + 2 * logoMargin,
+      //     logoSize + 2 * logoMargin,
+      //     x - logoMargin,
+      //     y - logoMargin,
+      //     logoSize + 2 * logoMargin,
+      //     logoSize + 2 * logoMargin,
+      //   );
+      //   return
+      // }
       // Draw logo image
       mainCanvasContext.save();
       AwesomeQR._prepareRoundedCornerClip(mainCanvasContext, x, y, logoSize, logoSize, logoCornerRadius);
+
       mainCanvasContext.clip();
+      // @ts-ignore
       mainCanvasContext.drawImage(logoImage, x, y, logoSize, logoSize);
       mainCanvasContext.restore();
 
@@ -759,22 +825,7 @@ export class AwesomeQR {
       mainCanvasContext.save();
       mainCanvasContext.translate(margin, margin);
     }
-    console.log(size, rawSize, margin);
-    // return
 
-    // console.log(mainCanvas.getContext("2d").canvas)
-
-    // Swap and merge the foreground and the background
-    backgroundCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, size, size);
-    mainCanvasContext.drawImage(backgroundCanvas.getContext("2d").canvas, -margin, -margin, size, size);
-
-    // Scale the final image
-    // const outCanvas = new Canvas(rawSize, rawSize); //document.createElement("canvas");
-    // const outCanvas = this.options.canvasContainer!.qrOutContainer
-    // const outCanvasContext = outCanvas.getContext("2d");
-
-    // outCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, rawSize, rawSize);
-    // resetCanvasHeighAndWidth(mainCanvas,size,1)
     this.canvas = mainCanvas;
     return new Promise((reslove, reject) => {
       wx.canvasToTempFilePath({
