@@ -18,14 +18,19 @@ export function loadImage(canvas: WechatMiniprogram.Canvas, imgSrc: string): Pro
     }
   })
 }
-export function resetCanvasHeighAndWidth(canvas: WechatMiniprogram.Canvas, size: number, needDpr: boolean = true) {
+export function resetCanvasHeighAndWidth(canvas: WechatMiniprogram.Canvas, size: number, scale?: number | undefined) {
   const ctx: WechatMiniprogram.CanvasContext = canvas.getContext('2d');
-  let dpr = 1;
-  if (needDpr) {
-    dpr = wx.getSystemInfoSync().pixelRatio
+  let dpr = wx.getSystemInfoSync().pixelRatio;
+  if (scale) {
+    dpr = scale;
   }
+
   canvas.width = size * dpr
   canvas.height = size * dpr
   ctx.scale(dpr, dpr);
   return canvas
+}
+
+export function getRoundNum(num: number, fixedNum: number = 0): number {
+  return Number(num.toFixed(fixedNum))
 }

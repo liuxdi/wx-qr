@@ -1,6 +1,6 @@
 // import { Canvas, CanvasRenderingContext2D, Image, loadImage } from "skia-canvas";
 import { canvasContainer } from "../type";
-import { loadImage, resetCanvasHeighAndWidth } from "../util";
+import { getRoundNum, loadImage, resetCanvasHeighAndWidth } from "../util";
 import { QRCodeModel, QRErrorCorrectLevel, QRUtil } from "./qrcode";
 type Canvas = WechatMiniprogram.Canvas;
 type CanvasRenderingContext2D = WechatMiniprogram.CanvasContext
@@ -245,10 +245,10 @@ export type Options = {
 };
 
 export class AwesomeQR {
-  private canvas: Canvas;
-  private canvasContext: CanvasRenderingContext2D;
+  private canvas!: Canvas;
+  private canvasContext!: CanvasRenderingContext2D;
   private qrCode?: QRCodeModel;
-  private options: Options;
+  private options!: Options;
 
   static CorrectLevel = QRErrorCorrectLevel;
 
@@ -289,8 +289,16 @@ export class AwesomeQR {
   };
 
   constructor(options: Partial<Options>) {
-    const _options = Object.assign({}, options);
+    this.setOptions(options)
+    // this.canvas = new Canvas(options.size!, options.size!);
 
+  }
+
+  draw(): Promise<string | undefined> {
+    return new Promise((resolve) => this._draw().then(resolve));
+  }
+  setOptions(options: Partial<Options>): Options {
+    const _options = Object.assign({}, options);
     (Object.keys(AwesomeQR.defaultOptions) as (keyof Options)[]).forEach((k) => {
       if (!(k in _options)) {
         Object.defineProperty(_options, k, { value: AwesomeQR.defaultOptions[k], enumerable: true, writable: true });
@@ -316,8 +324,6 @@ export class AwesomeQR {
         }
       });
     }
-    console.log(_options.components);
-
     if (_options.dotScale !== null && _options.dotScale !== undefined) {
       if (_options.dotScale! <= 0 || _options.dotScale! > 1) {
         throw new Error("dotScale should be in range (0, 1].");
@@ -327,11 +333,16 @@ export class AwesomeQR {
       _options.components.alignment!.scale = _options.dotScale;
     }
 
+
+
+
     this.options = _options as Options;
-    // this.canvas = new Canvas(options.size!, options.size!);
+
     this.canvas = options.canvasContainer!.qrMainContainer
-    this.canvasContext = this.canvas.getContext("2d")!;
-    this.qrCode = new QRCodeModel(-1, this.options.correctLevel!);
+    this.canvasContext = this.canvas.getContext("2d");
+
+    this.qrCode = new QRCodeModel(-1, this.options.correctLevel!)
+
     if (Number.isInteger(this.options.maskPattern)) {
       this.qrCode.maskPattern = this.options.maskPattern!;
     }
@@ -340,12 +351,8 @@ export class AwesomeQR {
     }
     this.qrCode.addData(this.options.text);
     this.qrCode.make();
+    return _options as Options;
   }
-
-  draw(): Promise<string | undefined> {
-    return new Promise((resolve) => this._draw().then(resolve));
-  }
-
   private _clear() {
     this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
@@ -382,20 +389,16 @@ export class AwesomeQR {
       b: 0,
     };
     let count = 0;
-    console.log(image);
     //  @ts-ignore
     height = image.naturalHeight || image.height;
     //  @ts-ignore
     width = image.naturalWidth || image.width;
-    const canvas = options.canvasContainer!.qrBakContainer
+    const canvas = options.canvasContainer!.qrBgContainer
     const context = canvas.getContext("2d");
-    resetCanvasHeighAndWidth(canvas, Math.min(height, width), false);
 
     if (!context) {
       return defaultRGB;
     }
-
-    context.drawImage(image, 0, 0);
 
     let data;
     try {
@@ -490,10 +493,11 @@ export class AwesomeQR {
 
     const whiteMargin = this.options.whiteMargin!;
     const backgroundDimming = this.options.backgroundDimming!;
-    const nSize = Math.ceil(rawViewportSize / nCount);
+    const nSize = getRoundNum(rawViewportSize / nCount, 1)
     const viewportSize = nSize * nCount;
-    const size = viewportSize + 2 * margin;
+    let size = getRoundNum(viewportSize + 2 * margin, 1);
 
+    // console.log({ rawViewportSize, size, correctLevel: this.options.correctLevel, nCount })
     // const mainCanvas = new Canvas(size, size);
     const mainCanvas = this.options.canvasContainer!.qrMainContainer;
     const mainCanvasContext = mainCanvas.getContext("2d");
@@ -510,11 +514,6 @@ export class AwesomeQR {
     if (!!this.options.backgroundImage) {
       const backgroundImage = await loadImage(backgroundCanvas, this.options.backgroundImage!);
 
-      if (this.options.autoColor) {
-        const avgRGB = AwesomeQR._getAverageRGB(backgroundImage, this.options);
-        this.options.colorDark = `rgb(${avgRGB.r},${avgRGB.g},${avgRGB.b})`;
-      }
-
       backgroundCanvasContext.drawImage(
         backgroundImage,
         0,
@@ -526,6 +525,10 @@ export class AwesomeQR {
         size,
         size
       );
+      if (this.options.autoColor) {
+        const avgRGB = AwesomeQR._getAverageRGB(backgroundImage, this.options);
+        this.options.colorDark = `rgb(${avgRGB.r},${avgRGB.g},${avgRGB.b})`;
+      }
       backgroundCanvasContext.rect(0, 0, size, size);
       backgroundCanvasContext.fillStyle = backgroundDimming;
       backgroundCanvasContext.fill();
@@ -538,7 +541,7 @@ export class AwesomeQR {
     const dataScale = this.options.components?.data?.scale || defaultScale;
     const dataXyOffset = (1 - dataScale) * 0.5;
     console.log(dataXyOffset);
-    
+
     for (let row = 0; row < nCount; row++) {
       for (let col = 0; col < nCount; col++) {
         const bIsDark = this.qrCode!.isDark(row, col);
@@ -757,6 +760,9 @@ export class AwesomeQR {
       mainCanvasContext.translate(margin, margin);
     }
     console.log(size, rawSize, margin);
+    // return
+
+    // console.log(mainCanvas.getContext("2d").canvas)
 
     // Swap and merge the foreground and the background
     backgroundCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, size, size);
@@ -764,16 +770,18 @@ export class AwesomeQR {
 
     // Scale the final image
     // const outCanvas = new Canvas(rawSize, rawSize); //document.createElement("canvas");
-    const outCanvas = this.options.canvasContainer!.qrOutContainer
-    const outCanvasContext = outCanvas.getContext("2d");
+    // const outCanvas = this.options.canvasContainer!.qrOutContainer
+    // const outCanvasContext = outCanvas.getContext("2d");
 
-    outCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, rawSize, rawSize);
-    this.canvas = outCanvas;
+    // outCanvasContext.drawImage(mainCanvas.getContext("2d").canvas, 0, 0, rawSize, rawSize);
+    // resetCanvasHeighAndWidth(mainCanvas,size,1)
+    this.canvas = mainCanvas;
     return new Promise((reslove, reject) => {
       wx.canvasToTempFilePath({
-        canvas: outCanvas,
-        destWidth: outCanvas.width,
-        destHeight: outCanvas.height
+        canvas: this.canvas,
+        quality: 1,
+        destWidth: this.canvas.width,
+        destHeight: this.canvas.height
       }).then(rsp => {
         reslove(rsp.tempFilePath)
       }).catch(err => {

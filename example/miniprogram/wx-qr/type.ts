@@ -1,9 +1,7 @@
 import { DEFAULT_SIZE } from "./util";
 import type { ComponentOptions } from './lib/awesome-qr'
 export enum canvasContainer {
-    qrOutContainer = 'qrOutContainer',
     qrMainContainer = 'qrMainContainer',
-    qrBakContainer = 'qrBakContainer',
     qrBgContainer = 'qrBgContainer',
 }
 export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
@@ -25,7 +23,7 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     },
     margin: {
         type: Number,
-        value: 20
+        value: 0
     },
     colorDark: {
         type: String,
@@ -78,8 +76,8 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     },
     dotScale: {
         type: Number,
-        value: 1 
-        
+        value: 1
+
     },
     autoColor: {
         type: Boolean,

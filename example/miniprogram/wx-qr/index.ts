@@ -1,4 +1,4 @@
-import { AwesomeQR } from "./lib/index";
+import { AwesomeQR, Options } from "./lib/index";
 import { qrTypes } from "./type";
 import { COMPONENT_NAME, DEFAULT_SIZE, getPxFromRpx, resetCanvasHeighAndWidth } from "./util";
 
@@ -21,12 +21,19 @@ Component({
             this.setData({
                 canvasSize: size
             })
+        },
+        'text, size, margin, colorDark, colorLight, backgroundColor, backgroundDimming, logoScale, logoBackgroundColor, correctLevel, logoMargin, logoCornerRadius, dotScale, bgSrc, logoSrc, whiteMargin, autoColor'() {
+            this.render();
         }
     },
-    attached() {
-        this.render();
+    lifetimes: {
+        attached() {
+            // this.render();
+        },
+        detached() {
+
+        },
     },
-    // : [WechatMiniprogram.Canvas, WechatMiniprogram.CanvasContext] 
     methods: {
         getCanvasAndContext(size: number): Promise<WechatMiniprogram.Canvas[]> {
             return new Promise((reslove, reject) => {
@@ -76,54 +83,62 @@ Component({
             }
             console.log(dotScale);
 
-            const [qrOutContainer, qrMainContainer, qrBakContainer, qrBgContainer] = await this.getCanvasAndContext(pxSize);
-            // console.log(qrMainContainer);
-            // const context: WechatMiniprogram.CanvasContext = qrMainContainer.getContext('2d');
-            // context.beginPath();
-            // context.strokeStyle = "#000000";
-            // context.lineWidth = 4;
-            // context.lineTo(100, 100);
-            // context.lineTo(0, 100);
-            // context.lineTo(0, 0);
-            // context.fill();
-            // context.closePath();
-            // context.stroke();
-
-            // wx.canvasToTempFilePath({ canvas: qrMainContainer }).then(rsp => {
-            //     console.log(rsp);
-
-            // }).catch(e => {
-            //     console.log(e);
-
-            // })
-
-            // return
-
-
-            new AwesomeQR({
+            const [qrMainContainer, qrBgContainer] = await this.getCanvasAndContext(pxSize);
+            let option: Options = {
                 text: text,
                 size: pxSize,
-                margin: margin,
+                margin: 5 || margin,
                 colorDark: colorDark,
                 colorLight: colorLight,
                 backgroundImage: bgSrc,
                 backgroundDimming: backgroundDimming,
                 logoImage: logoSrc,
                 logoScale: logoScale,
-                correctLevel: correctLevel,
+                correctLevel: 3 || correctLevel,
                 logoMargin: logoMargin,
                 logoCornerRadius: logoCornerRadius,
                 whiteMargin: toBoolean(whiteMargin),
                 dotScale: dotScale,
                 autoColor: toBoolean(autoColor),
                 components: components,
-                canvasContainer: { qrOutContainer, qrMainContainer, qrBakContainer, qrBgContainer }
-            }).draw().then(rsp => {
+                canvasContainer: { qrMainContainer, qrBgContainer }
+            };
+            if (!this.data.qrDraw) {
+                this.data.qrDraw = new AwesomeQR(option);
+            } else {
+                this.data.qrDraw.setOptions(option);
+            }
+            this._draw();
+
+        },
+
+        // 获取生成二维码的临时文件
+        getQrFile() {
+            return this.data.imgSrc
+        },
+        // 获取生成二维码的base64
+        getQrData() {
+            // todo
+            return null
+        },
+        saveImg() {
+            wx.saveFile({
+                tempFilePath: this.data.imgSrc
+            }).then(rsp => {
+                console.log(rsp);
+
+            }).catch(err => {
+                console.log(err);
+
+            })
+        },
+        _draw() {
+            this.data.qrDraw.draw().then((rsp: string) => {
                 console.log(rsp)
                 this.setData({
                     imgSrc: rsp
                 })
-            }).catch(err => {
+            }).catch((err: any) => {
                 console.log(err);
 
             })
