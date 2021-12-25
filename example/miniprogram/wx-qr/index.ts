@@ -22,7 +22,7 @@ Component({
                 canvasSize: size
             })
         },
-        'text, size, margin, colorDark, colorLight, backgroundColor, backgroundDimming, logoScale, logoBackgroundColor, correctLevel, logoMargin, logoCornerRadius, dotScale, bgSrc, logoSrc, whiteMargin, autoColor'() {
+        'text, size, margin, colorDark, colorLight, backgroundColor, backgroundDimming, logoScale, correctLevel, logoMargin, logoCornerRadius, dotScale, bgSrc, logoSrc, whiteMargin, autoColor'() {
             this.render();
         }
     },
@@ -59,10 +59,9 @@ Component({
                 margin,
                 colorDark,
                 colorLight,
-                backgroundColor,
+                maskPattern,
                 backgroundDimming,
                 logoScale,
-                logoBackgroundColor,
                 correctLevel,
                 logoMargin,
                 logoCornerRadius,
@@ -81,27 +80,28 @@ Component({
             if (size.endsWith('rpx')) {
                 pxSize = getPxFromRpx(pxSize)
             }
-            console.log(dotScale);
+            // console.log('aaaaa',maskPattern);
 
             const [qrMainContainer] = await this.getCanvasAndContext(pxSize);
             let option: Options = {
                 text: text,
                 size: pxSize,
-                margin: 5 || margin,
+                margin: margin,
                 colorDark: colorDark,
                 colorLight: colorLight,
                 backgroundImage: bgSrc,
                 backgroundDimming: backgroundDimming,
                 logoImage: logoSrc,
                 logoScale: logoScale,
-                correctLevel: 3 || correctLevel,
+                correctLevel: correctLevel,
                 logoMargin: logoMargin,
                 logoCornerRadius: logoCornerRadius,
                 whiteMargin: toBoolean(whiteMargin),
                 dotScale: dotScale,
                 autoColor: toBoolean(autoColor),
                 components: components,
-                canvasContainer: { qrMainContainer }
+                canvasContainer: { qrMainContainer },
+                maskPattern
             };
             if (!this.data.qrDraw) {
                 this.data.qrDraw = new AwesomeQR(option);

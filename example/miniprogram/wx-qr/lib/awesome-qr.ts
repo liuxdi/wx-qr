@@ -179,14 +179,6 @@ export type Options = {
    * @defaultValue "rgba(0, 0, 0, 0)"
    */
   backgroundDimming?: string;
-
-  /**
-   * GIF background image to be used in the QR code.
-   *
-   * @defaultValue undefined
-   */
-  gifBackground?: ArrayBuffer;
-
   /**
    * Use a white margin instead of a transparent one which reveals the background of the QR code on margins.
    *
@@ -342,7 +334,6 @@ export class AwesomeQR {
     this.canvasContext = this.canvas.getContext("2d");
 
     this.qrCode = new QRCodeModel(-1, this.options.correctLevel!)
-
     if (Number.isInteger(this.options.maskPattern)) {
       this.qrCode.maskPattern = this.options.maskPattern!;
     }
