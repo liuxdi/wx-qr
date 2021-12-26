@@ -14,7 +14,7 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     },
     margin: {
         type: Number,
-        value: 0
+        value: 30
     },
     correctLevel: {
         type: Number,
@@ -40,7 +40,7 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     },
     colorLight: {
         type: String,
-        value: "#FF00FF"
+        value: "#FFFFFF"
     },
     autoColor: {
         type: Boolean,

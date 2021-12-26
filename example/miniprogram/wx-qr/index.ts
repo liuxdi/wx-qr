@@ -22,7 +22,7 @@ Component({
                 canvasSize: size
             })
         },
-        'text, size, margin, colorDark, colorLight, backgroundColor, backgroundDimming, logoScale, correctLevel, logoMargin, logoCornerRadius, dotScale, bgSrc, logoSrc, whiteMargin, autoColor'() {
+        'text,size,margin,colorDark,colorLight,maskPattern,backgroundDimming,logoScale,correctLevel,logoMargin,logoCornerRadius,dotScale,bgSrc,logoSrc,whiteMargin,autoColor,components,version'() {
             this.render();
         }
     },
@@ -70,7 +70,8 @@ Component({
                 logoSrc,
                 whiteMargin,
                 autoColor,
-                components
+                components,
+                version
             } = this.data;
             let reg = new RegExp(/\d+(px|rpx)$/g);
             if (!reg.test(size)) {
@@ -87,21 +88,22 @@ Component({
                 text: text,
                 size: pxSize,
                 margin: margin,
+                correctLevel: correctLevel,
+                maskPattern,
+                version,
+                components: components,
                 colorDark: colorDark,
                 colorLight: colorLight,
+                autoColor: toBoolean(autoColor),
                 backgroundImage: bgSrc,
                 backgroundDimming: backgroundDimming,
+                whiteMargin: toBoolean(whiteMargin),
                 logoImage: logoSrc,
                 logoScale: logoScale,
-                correctLevel: correctLevel,
                 logoMargin: logoMargin,
                 logoCornerRadius: logoCornerRadius,
-                whiteMargin: toBoolean(whiteMargin),
                 dotScale: dotScale,
-                autoColor: toBoolean(autoColor),
-                components: components,
                 canvasContainer: { qrMainContainer },
-                maskPattern
             };
             if (!this.data.qrDraw) {
                 this.data.qrDraw = new AwesomeQR(option);

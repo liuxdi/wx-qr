@@ -1,3 +1,3 @@
-<image hidden="{{false}}" src="{{imgSrc}}" bindtap="saveImg" show-menu-by-longpress style="height: {{size}};width: {{size}};" mode="aspectFill" />
+<image hidden="{{true}}" src="{{imgSrc}}" bindtap="saveImg" show-menu-by-longpress style="height: {{size}};width: {{size}};" mode="aspectFill" />
 <!-- 主绘制区 -->
 <canvas id="qr-main-container" hidden="{{false}}" class="qr-canvas" style="height: {{size}};width: {{size}}" type="2d"></canvas>

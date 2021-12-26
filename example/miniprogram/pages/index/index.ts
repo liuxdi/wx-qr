@@ -16,7 +16,7 @@ const options: ComponentOptions = {
 }
 Component({
   data: {
-    text: 'aaaa',
+    text: 'https://gitee.com/liu_di/wx-qrhttps://gitee.com/liu_di/wx-qr',
     // text: 'https://gitee.com/liu_di/wx-qr',
     ComponentOptions: options
   },

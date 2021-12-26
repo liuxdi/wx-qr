@@ -536,8 +536,8 @@ export class AwesomeQR {
         backgroundImage.height,
         0,
         0,
-        size,
-        size
+        size-margin,
+        size-margin
       );
       if (this.options.autoColor) {
         const avgRGB = AwesomeQR._getAverageRGB(backgroundImage, this.options);
@@ -555,7 +555,6 @@ export class AwesomeQR {
     const dataScale = this.options.components?.data?.scale || defaultScale;
     const dataXyOffset = (1 - dataScale) * 0.5;
 
-    const oldGlobalCompositeOperation = mainCanvasContext.globalCompositeOperation;
     // 提前预备好logo margin的空
     if (!!this.options.logoImage && this.options.logoMargin) {
       let logoMargin = this.options.logoMargin!;
@@ -625,9 +624,6 @@ export class AwesomeQR {
         }
       }
     }
-    mainCanvasContext.globalCompositeOperation = oldGlobalCompositeOperation;
-    // return
-
     const cornerAlignmentCenter = alignmentPatternCenters[alignmentPatternCenters.length - 1];
 
     // - PROTECTORS
