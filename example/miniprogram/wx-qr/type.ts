@@ -3,6 +3,10 @@ export enum canvasContainer {
     qrMainContainer = 'qrMainContainer',
 }
 export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
+    canvasMode: {
+        type: Boolean,
+        value: false
+    },
     text: {
         type: String,
         value: ''

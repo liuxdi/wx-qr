@@ -1,6 +1,6 @@
 import { AwesomeQR, Options } from "./lib/index";
 import { qrTypes } from "./type";
-import { COMPONENT_NAME, DEFAULT_SIZE, getPxFromStringOrNumber,  getRpxFromStringOrNumber, resetCanvasHeighAndWidth } from "./util";
+import { COMPONENT_NAME, DEFAULT_SIZE, getPxFromStringOrNumber, getRpxFromStringOrNumber, resetCanvasHeighAndWidth } from "./util";
 
 Component({
     properties: qrTypes,
@@ -94,19 +94,17 @@ Component({
                 dotScale: dotScale,
                 canvasContainer: { qrMainContainer },
             };
+            option.backgroundImage = undefined;
+            option.whiteMargin = false;
+            option.colorLight='rgba(0,0,0,0)';
+
             if (!this.data.qrDraw) {
                 this.data.qrDraw = new AwesomeQR(option);
             } else {
                 this.data.qrDraw.setOptions(option);
             }
+
             this._draw();
-            setTimeout(() => {
-                // option.text += 'aasdsdgwsdgwerqwer';
-                // option.logoMargin=0
-                option.logoCornerRadius=20
-                this.data.qrDraw.setOptions(option)
-                this._draw();
-            }, 2000);
         },
 
         // 获取生成二维码的临时文件

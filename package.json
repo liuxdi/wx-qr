@@ -1,9 +1,17 @@
 {
   "name": "wx-qr",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "微信小程序生成二维码组件",
-  "main": "index.js",
+  "miniprogram": "dist",
   "repository": "git@gitee.com:liu_di/wx-qr.git",
-  "author": "liudi <liudi@cethik.com>",
-  "license": "MIT"
+  "author": "liudi <740191337@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --declaration"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "miniprogram-api-typings": "^3.4.4",
+    "typescript": "^4.5.4"
+  }
 }

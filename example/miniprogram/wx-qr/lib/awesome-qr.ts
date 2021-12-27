@@ -1,4 +1,3 @@
-// import { Canvas, CanvasRenderingContext2D, Image, loadImage } from "skia-canvas";
 import { canvasContainer } from "../type";
 import { getRoundNum, loadImage, resetCanvasHeighAndWidth } from "../util";
 import { QRCodeModel, QRErrorCorrectLevel, QRUtil } from "./qrcode";
