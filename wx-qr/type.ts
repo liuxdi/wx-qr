@@ -14,7 +14,8 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     },
     margin: {
         type: Number,
-        value: 30
+        optionalTypes: [String],
+        value: 10
     },
     correctLevel: {
         type: Number,
@@ -63,7 +64,7 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
     whiteMargin: {
         type: Boolean,
         optionalTypes: [String],
-        value: true
+        value: false
     },
     /**
      * logo地址
@@ -84,6 +85,7 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
      */
     logoMargin: {
         type: Number,
+        optionalTypes: [String],
         value: 0
     },
     /**

@@ -1,25 +1,18 @@
 import { AwesomeQR, Options } from "./lib/index";
 import { qrTypes } from "./type";
-import { COMPONENT_NAME, DEFAULT_SIZE, getPxFromRpx, resetCanvasHeighAndWidth } from "./util";
-
-function toBoolean(data: any) {
-    return Boolean(data)
-}
+import { COMPONENT_NAME, DEFAULT_SIZE, getPxFromStringOrNumber,  getRpxFromStringOrNumber, resetCanvasHeighAndWidth } from "./util";
 
 Component({
     properties: qrTypes,
     data: {
         imgSrc: "",
-        canvasSize: DEFAULT_SIZE
+        canvasSize: DEFAULT_SIZE,
     },
     observers: {
         size(newVal) {
-            let size = newVal;
-            if (typeof newVal === 'number') {
-                size = newVal + 'rpx';
-            }
+
             this.setData({
-                canvasSize: size
+                canvasSize: getRpxFromStringOrNumber(newVal) + 'rpx'
             })
         },
         'text,size,margin,colorDark,colorLight,maskPattern,backgroundDimming,logoScale,correctLevel,logoMargin,logoCornerRadius,dotScale,bgSrc,logoSrc,whiteMargin,autoColor,components,version'() {
@@ -73,35 +66,31 @@ Component({
                 components,
                 version
             } = this.data;
-            let reg = new RegExp(/\d+(px|rpx)$/g);
-            if (!reg.test(size)) {
-                console.error('传入的数值非px或rpx，默认按rpx进行处理')
-            }
-            let pxSize = Number(size.replace(/px|rpx/g, ''));
-            if (size.endsWith('rpx')) {
-                pxSize = getPxFromRpx(pxSize)
-            }
-            // console.log('aaaaa',maskPattern);
 
-            const [qrMainContainer] = await this.getCanvasAndContext(pxSize);
+
+            let totalSize = getPxFromStringOrNumber(size)
+            this.setData({
+                totalSize
+            })
+            const [qrMainContainer] = await this.getCanvasAndContext(totalSize);
             let option: Options = {
                 text: text,
-                size: pxSize,
-                margin: margin,
+                size: totalSize,
+                margin: getPxFromStringOrNumber(margin),
                 correctLevel: correctLevel,
                 maskPattern,
                 version,
                 components: components,
                 colorDark: colorDark,
                 colorLight: colorLight,
-                autoColor: toBoolean(autoColor),
+                autoColor: autoColor,
                 backgroundImage: bgSrc,
                 backgroundDimming: backgroundDimming,
-                whiteMargin: toBoolean(whiteMargin),
+                whiteMargin: whiteMargin,
                 logoImage: logoSrc,
                 logoScale: logoScale,
-                logoMargin: logoMargin,
-                logoCornerRadius: logoCornerRadius,
+                logoMargin: getPxFromStringOrNumber(logoMargin),
+                logoCornerRadius: getPxFromStringOrNumber(logoCornerRadius),
                 dotScale: dotScale,
                 canvasContainer: { qrMainContainer },
             };
@@ -111,7 +100,13 @@ Component({
                 this.data.qrDraw.setOptions(option);
             }
             this._draw();
-
+            setTimeout(() => {
+                // option.text += 'aasdsdgwsdgwerqwer';
+                // option.logoMargin=0
+                option.logoCornerRadius=20
+                this.data.qrDraw.setOptions(option)
+                this._draw();
+            }, 2000);
         },
 
         // 获取生成二维码的临时文件

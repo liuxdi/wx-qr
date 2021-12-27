@@ -1,0 +1,9 @@
+{
+  "name": "wx-qr",
+  "version": "1.0.0",
+  "description": "微信小程序生成二维码组件",
+  "main": "index.js",
+  "repository": "git@gitee.com:liu_di/wx-qr.git",
+  "author": "liudi <liudi@cethik.com>",
+  "license": "MIT"
+}
