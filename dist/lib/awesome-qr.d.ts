@@ -231,4 +231,5 @@ export declare class AwesomeQR {
     private static _drawAlignProtector;
     private static _drawAlign;
     private _draw;
+    getDataUrl(type?: string, encoderOptions?: number): string;
 }

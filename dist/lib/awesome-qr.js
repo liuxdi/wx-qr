@@ -424,4 +424,7 @@ export class AwesomeQR {
         });
         // Promise.resolve(this.canvas.toDataURL(format, 1));
     }
+    getDataUrl(type = 'png', encoderOptions = 1) {
+        return this.canvas.toDataURL(type, encoderOptions);
+    }
 }

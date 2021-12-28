@@ -15,14 +15,13 @@
 - 开发者工具版本：1.05.2112172
 ## 预览
 
-todo
+[微信开发者工具打开](https://developers.weixin.qq.com/s/ZHaLMTmA7lvA)
 
 ## 安装
 
 ### 方法一：通过 npm 安装（推荐）
 
 ```bash
-
 # 通过 npm 安装
 npm i wx-qr -S
 
@@ -30,7 +29,6 @@ npm i wx-qr -S
 yarn add wx-qr
 
 ```
-
 ### 方法二：直接下载使用
 
 通过 git 下载 wx-qr 源代码，并将根目录中的 `dist` 文件夹拷贝到自己的项目中去
@@ -68,7 +66,6 @@ Page({
 });
 ```
 ## API
-
 ### props
 
 props中涉及到的属性，都是可选的，如果不传，则使用默认值。若是涉及大小的属性，不传单位则默认为 `rpx`。
@@ -78,6 +75,11 @@ props中涉及到的属性，都是可选的，如果不传，则使用默认值
 |        text         |                                              二维码内容                                               |        `String`        | ''              |
 |        size         |                                  二维码尺寸，若无单位，则默认为 rpx                                   |  `'Number'\|'String'`  | `200rpx`        |
 |      dotScale       |                                          每块二维码点的大小                                           |        `Number`        | `1`             |
+|   backgroundImage   |                                            二维码背景图片                                             |        `String`        | ''              |
+|  backgroundDimming  |                                          背景图上掩膜的颜色                                           |        `String`        | `rgba(0,0,0,0)` |
+|      logoImage      |                                        二维码中间的 logo 图片                                         |        `String`        | ''              |
+|      logoScale      |                                       logo 图片占整个二维码比例                                       |        `Number`        | `0.2`           |
+|     logoMargin      |                           logo 图片距离二维码的距离,若无单位，则默认为 rpx                            |        `Number`        | `0`             |
 |     canvasMode      |                             是否使用 canvas 绘制二维，默认以图片形式展示                              |       `Boolean`        | `false`         |
 | showMenuByLongpress |                                在canvasMode=false时，是否长按显示菜单                                 |       `Boolean`        | `true`          |
 |       margin        |                                  二维码边距，若无单位，则默认为 rpx                                   | `'Number' \| 'String'` | `10rpx`         |
@@ -85,11 +87,9 @@ props中涉及到的属性，都是可选的，如果不传，则使用默认值
 |     maskPattern     | 二维码自定义掩码[详见](https://en.wikiversity.org/wiki/Reed%E2%80%93Solomon_codes_for_coders#Masking) |    `Number`\|`null`    | `null`          |
 |       version       |                    二维码版本[详见](https://www.qrcode.com/en/about/version.html)                     |    `Number`\|`null`    | `null`          |
 |     components      |                                        二维码中控制组件的选项                                         |   `ComponentOptions`   | `{}`            |
-|      colorDark      |                                              二维码颜色                                               |        `String`        | `#000000`       |
-|     colorLight      |                                             二维码背景色                                              |        `String`        | `#FFFFFF`       |
-|      autoColor      |                                         是否自动配置线条颜色                                          |       `Boolean`        | `false`         |
-|   backgroundImage   |                                            二维码背景图片                                             |        `String`        | ''              |
-|  backgroundDimming  |                                          背景图上掩膜的颜色                                           |        `String`        | `rgba(0,0,0,0)` |
+|      colorDark      |                             二维码颜色，若设置此项，需将`autoColor=false`                             |        `String`        | `#000000`       |
+|     colorLight      |                          二维码背景色，若设置此项，需将`backgroundImage=''`                           |        `String`        | `#FFFFFF`       |
+|      autoColor      |                                   是否自动根据背景图配置二维码颜色                                    |       `Boolean`        | `false`         |
 |     whiteMargin     |                                   如果有margin的话是否展示白色的边                                    |       `Boolean`        | `false`         |
 |  logoCornerRadius   |                                 logo圆角大小，若无单位，则默认为 rpx                                  |        `Number`        | `0`             |
 

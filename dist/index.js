@@ -10,30 +10,32 @@ Component({
     observers: {
         size(newVal) {
             this.setData({
-                canvasSize: getRpxFromStringOrNumber(newVal) + 'rpx'
+                canvasSize: getRpxFromStringOrNumber(newVal) + "rpx",
             });
         },
-        'text,size,margin,colorDark,colorLight,maskPattern,backgroundDimming,logoScale,correctLevel,logoMargin,logoCornerRadius,dotScale,bgSrc,logoSrc,whiteMargin,autoColor,components,version'() {
+        "text,size,margin,colorDark,colorLight,maskPattern,backgroundDimming,logoScale,correctLevel,logoMargin,logoCornerRadius,dotScale,backgroundImage,logoImage,whiteMargin,autoColor,components,version"() {
             this.render();
-        }
+        },
     },
     lifetimes: {
         attached() {
             // this.render();
         },
-        detached() {
-        },
+        detached() { },
     },
     methods: {
         getCanvasAndContext(size) {
             return new Promise((reslove, reject) => {
                 try {
                     const query = this.createSelectorQuery();
-                    query.selectAll('.qr-canvas').fields({ node: true, size: true, id: true }).exec(res => {
-                        const canvasList = res[0].map(((item) => {
+                    query
+                        .selectAll(".qr-canvas")
+                        .fields({ node: true, size: true, id: true })
+                        .exec((res) => {
+                        const canvasList = res[0].map((item) => {
                             const canvas = resetCanvasHeighAndWidth(item.node, size);
                             return canvas;
-                        }));
+                        });
                         reslove(canvasList);
                     });
                 }
@@ -44,10 +46,10 @@ Component({
             });
         },
         async render() {
-            const { text, size, margin, colorDark, colorLight, maskPattern, backgroundDimming, logoScale, correctLevel, logoMargin, logoCornerRadius, dotScale, bgSrc, logoSrc, whiteMargin, autoColor, components, version } = this.data;
+            const { text, size, margin, colorDark, colorLight, maskPattern, backgroundDimming, logoScale, correctLevel, logoMargin, logoCornerRadius, dotScale, backgroundImage, logoImage, whiteMargin, autoColor, components, version, } = this.data;
             let totalSize = getPxFromStringOrNumber(size);
             this.setData({
-                totalSize
+                totalSize,
             });
             const [qrMainContainer] = await this.getCanvasAndContext(totalSize);
             let option = {
@@ -61,24 +63,24 @@ Component({
                 colorDark: colorDark,
                 colorLight: colorLight,
                 autoColor: autoColor,
-                backgroundImage: bgSrc,
+                backgroundImage: backgroundImage,
                 backgroundDimming: backgroundDimming,
                 whiteMargin: whiteMargin,
-                logoImage: logoSrc,
+                logoImage: logoImage,
                 logoScale: logoScale,
                 logoMargin: getPxFromStringOrNumber(logoMargin),
                 logoCornerRadius: getPxFromStringOrNumber(logoCornerRadius),
                 dotScale: dotScale,
                 canvasContainer: { qrMainContainer },
             };
-            option.backgroundImage = undefined;
-            option.whiteMargin = false;
-            option.colorLight = 'rgba(0,0,0,0)';
             if (!this.data.qrDraw) {
                 this.data.qrDraw = new AwesomeQR(option);
             }
             else {
                 this.data.qrDraw.setOptions(option);
+            }
+            if (!text) {
+                return;
             }
             this._draw();
         },
@@ -87,28 +89,32 @@ Component({
             return this.data.imgSrc;
         },
         // 获取生成二维码的base64
-        getQrData() {
-            // todo
-            return null;
+        getQrData(type, encoderOptions) {
+            return this.data.qrDraw && this.data.qrDraw.getDataUrl(type, encoderOptions);
         },
         saveImg() {
             wx.saveFile({
-                tempFilePath: this.data.imgSrc
-            }).then(rsp => {
+                tempFilePath: this.data.imgSrc,
+            })
+                .then((rsp) => {
                 console.log(rsp);
-            }).catch(err => {
+            })
+                .catch((err) => {
                 console.log(err);
             });
         },
         _draw() {
-            this.data.qrDraw.draw().then((rsp) => {
-                console.log(rsp);
+            this.data.qrDraw
+                .draw()
+                .then((rsp) => {
                 this.setData({
-                    imgSrc: rsp
+                    imgSrc: rsp,
                 });
-            }).catch((err) => {
-                console.log(err);
+                this.triggerEvent("load", rsp);
+            })
+                .catch((err) => {
+                this.triggerEvent("error", err);
             });
-        }
-    }
+        },
+    },
 });
