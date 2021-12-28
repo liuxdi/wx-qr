@@ -1,0 +1,18 @@
+.full-w-h {
+  height: 100%;
+  width: 100%;
+}
+
+.qr-container {
+  position: relative;
+}
+
+.hide-canvas {
+  position: absolute;
+  top: 0;
+  right: 0;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -1;
+}

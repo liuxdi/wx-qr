@@ -10,4 +10,11 @@ Component({
     // text: 'https://gitee.com/liu_di/wx-qr',
     ComponentOptions: options
   },
+  methods: {
+    onLoadQr(e) {
+      console.log(e);
+
+
+    }
+  }
 })

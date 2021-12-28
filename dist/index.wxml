@@ -1,0 +1,5 @@
+<view class="qr-container" style="height: {{canvasSize}};width: {{canvasSize}};">
+  <image wx:if="{{!canvasMode}}" src="{{imgSrc}}" class="full-w-h" show-menu-by-longpress="{{showMenuByLongpress}}" mode="aspectFill" />
+  <!-- 主绘制区 -->
+  <canvas id="qr-main-container" class="qr-canvas {{!canvasMode&&'hide-canvas'}}" style="height: {{canvasSize}};width: {{canvasSize}};" type="2d"></canvas>
+</view>

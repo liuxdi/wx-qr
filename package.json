@@ -1,13 +1,19 @@
 {
   "name": "wx-qr",
-  "version": "1.0.1",
-  "description": "微信小程序生成二维码组件",
+  "version": "0.1.0",
+  "description": "微信小程序生成二维码组件，支持图标、底色、dotScale等各种配置",
   "miniprogram": "dist",
   "repository": "git@gitee.com:liu_di/wx-qr.git",
   "author": "liudi <740191337@qq.com>",
   "license": "MIT",
+  "keywords": [
+    "微信小程序",
+    "二维码",
+    "wechart",
+    "qrCode"
+  ],
   "scripts": {
-    "build": "tsc --declaration"
+    "build": "npx gulp"
   },
   "devDependencies": {
     "gulp": "^4.0.2",

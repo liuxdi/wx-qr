@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "module": "es6",
+    "module": "esnext",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "esnext",
     "declaration": true,
     "noImplicitAny": false,
     "outDir": "./dist",
@@ -24,7 +24,7 @@
     "skipLibCheck": true
   },
   "include": [
-    "wx-qr/**/*"
+    "example/miniprogram/wx-qr/**/*"
   ],
   
 }

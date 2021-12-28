@@ -1,3 +1,3 @@
 <view>
-  <qr-code text="{{text}}" bgSrc="/image/bg.jpeg" margin="20" logoMargin="100" components="{{ComponentOptions}}"  autoColor="{{false}}" size="750" logoSrc="/image/logo.jpeg"></qr-code>
+  <qr-code id="qr" text="{{text}}" backgroundImage="/image/bg.jpeg" margin="20" logoMargin="100" components="{{ComponentOptions}}" autoColor="{{false}}" size="750" bindload="onLoadQr" logoImage="/image/logo.jpeg"></qr-code>
 </view>

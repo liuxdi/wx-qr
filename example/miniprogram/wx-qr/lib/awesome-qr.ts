@@ -788,4 +788,7 @@ export class AwesomeQR {
 
     // Promise.resolve(this.canvas.toDataURL(format, 1));
   }
+  getDataUrl(type: string = 'png', encoderOptions: number = 1) {
+    return this.canvas.toDataURL(type, encoderOptions)
+  }
 }
