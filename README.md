@@ -28,7 +28,7 @@
 
 ## 预览
 
-[微信开发者工具打开](https://developers.weixin.qq.com/s/ZHaLMTmA7lvA)
+[微信开发者工具打开](https://developers.weixin.qq.com/s/G3naeTm67SvY)
 
 ## 安装
 
