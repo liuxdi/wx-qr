@@ -3,10 +3,7 @@ export enum canvasContainer {
     qrMainContainer = 'qrMainContainer',
 }
 export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
-    canvasMode: {
-        type: Boolean,
-        value: false
-    },
+
     text: {
         type: String,
         value: ''
@@ -15,6 +12,21 @@ export const qrTypes: WechatMiniprogram.Component.PropertyOption = {
         type: String,
         optionalTypes: [Number],
         value: DEFAULT_SIZE
+    },
+    /**
+     * 是否以canvas展示二维码
+     */
+    canvasMode: {
+        type: Boolean,
+        value: false
+    },
+    /**
+     * [canvasMode=false]情况下
+     * 是否支持长按二维码展示菜单
+     */
+    showMenuByLongpress: {
+        type: Boolean,
+        value: true
     },
     margin: {
         type: Number,
