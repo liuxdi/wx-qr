@@ -158,7 +158,6 @@ type ComponentOptions = {
 ```html
 <qr-container id="qr">
 ```
-
 ```js
 const qrContainer = this.selectComponent('#qr');
 console.log(qrContainer.getQrFile());
