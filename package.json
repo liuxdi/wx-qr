@@ -1,16 +1,25 @@
 {
   "name": "wx-qr",
-  "version": "0.1.0",
+  "author": "liudi",
+  "version": "0.1.1",
   "description": "微信小程序生成二维码组件，支持图标、底色、dotScale等各种配置",
   "miniprogram": "dist",
-  "repository": "git@gitee.com:liu_di/wx-qr.git",
-  "author": "liudi <740191337@qq.com>",
+  "homepage": "https://github.com/liuxdi/wx-qr",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liuxdi/wx-qr"
+  },
+  "bugs": {
+    "url": "https://github.com/liuxdi/wx-qr/issues"
+  },
   "license": "MIT",
   "keywords": [
     "微信小程序",
     "二维码",
     "wechart",
-    "qrCode"
+    "qrCode",
+    "wx",
+    "qr"
   ],
   "scripts": {
     "build": "npx gulp"

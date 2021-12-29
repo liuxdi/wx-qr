@@ -1,5 +1,31 @@
+//---------------------------------------------------------------------
+//Copyright (c) 2017-2021 Makito
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// URL:https://github.com/SumiMakito/Awesome-qr.js
+//---------------------------------------------------------------------
+
+/**
+ * @description
+ * 在 Awesome-qr.js 基础上主要改动：
+ * 1. 将多个Canvas合并，并对其绘制过程进行重构
+ * 2. 将导出图片的方法改为微信小程序导出图片的临时文件
+ * 3. 修改loadImage方法，使其可以支持微信小程序
+ * 4. 删除gif动画的支持
+ */
 import { canvasContainer } from "../type";
-import { getRoundNum, loadImage, resetCanvasHeighAndWidth } from "../util";
+import { getRoundNum, loadImage } from "../util";
 import { QRCodeModel, QRErrorCorrectLevel, QRUtil } from "./qrcode";
 type Canvas = WechatMiniprogram.Canvas;
 type CanvasRenderingContext2D = WechatMiniprogram.CanvasContext
