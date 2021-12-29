@@ -1,7 +1,7 @@
 {
   "name": "wx-qr",
   "author": "liudi",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "微信小程序生成二维码组件，支持图标、底色、dotScale等各种配置",
   "miniprogram": "dist",
   "homepage": "https://github.com/liuxdi/wx-qr",
@@ -28,5 +28,8 @@
     "gulp": "^4.0.2",
     "miniprogram-api-typings": "^3.4.4",
     "typescript": "^4.5.4"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
