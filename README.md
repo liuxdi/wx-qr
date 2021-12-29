@@ -85,7 +85,8 @@ Page({
 
 ## 注意
 
-本库二维码基于 `Canvas` 绘制，但由于微信小程序[众所周知的原因](https://developers.weixin.qq.com/community/develop/doc/00044ee36e04601f236971e5c50000?highLine=Canvas%2520is%2520not%2520a%2520constructor)不支持真机调试 `Canvas` ，只能通过开发者工具以及手机预览功能进行查看。
+- 本库二维码基于 `Canvas` 绘制，但由于微信小程序[众所周知的原因](https://developers.weixin.qq.com/community/develop/doc/00044ee36e04601f236971e5c50000?highLine=Canvas%2520is%2520not%2520a%2520constructor)不支持真机调试(1.0版本) `Canvas` ，只能通过开发者工具以及手机**预览**功能进行查看。
+- 若开发者工具版本大于`1.05.2107221`，并且调试机型符合要求的，可以通过[真机调试2.0](https://developers.weixin.qq.com/miniprogram/dev/devtools/remote-debug-2.html)查看。
 
 ## API
 
