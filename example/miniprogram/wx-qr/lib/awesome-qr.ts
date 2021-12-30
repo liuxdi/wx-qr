@@ -25,7 +25,7 @@
  * 4. 删除gif动画的支持
  */
 import { canvasContainer } from "../type";
-import { getRoundNum, loadImage } from "../util";
+import { COMPONENT_NAME, getRoundNum, loadImage } from "../util";
 import { QRCodeModel, QRErrorCorrectLevel, QRUtil } from "./qrcode";
 type Canvas = WechatMiniprogram.Canvas;
 type CanvasRenderingContext2D = WechatMiniprogram.CanvasContext
@@ -307,8 +307,6 @@ export class AwesomeQR {
 
   constructor(options: Partial<Options>) {
     this.setOptions(options)
-    // this.canvas = new Canvas(options.size!, options.size!);
-
   }
 
   draw(): Promise<string | undefined> {
@@ -350,9 +348,6 @@ export class AwesomeQR {
       _options.components.alignment!.scale = _options.dotScale;
     }
 
-
-
-
     this.options = _options as Options;
 
     this.canvas = options.canvasContainer!.qrMainContainer
@@ -373,22 +368,6 @@ export class AwesomeQR {
     this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  private static _prepareRoundedCornerClip(
-    canvasContext: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    r: number
-  ) {
-    canvasContext.beginPath();
-    canvasContext.moveTo(x, y);
-    canvasContext.arcTo(x + w, y, x + w, y + h, r);
-    canvasContext.arcTo(x + w, y + h, x, y + h, r);
-    canvasContext.arcTo(x, y + h, x, y, r);
-    canvasContext.arcTo(x, y, x + w, y, r);
-    canvasContext.closePath();
-  }
   private static _prepareRoundedCornerClipReverse(
     canvasContext: CanvasRenderingContext2D,
     x: number,
@@ -535,8 +514,6 @@ export class AwesomeQR {
     const viewportSize = nSize * nCount;
     let size = getRoundNum(viewportSize + 2 * margin, 3);
 
-    // console.log({ rawViewportSize, size, correctLevel: this.options.correctLevel, nCount })
-    // const mainCanvas = new Canvas(size, size);
     const mainCanvas = this.options.canvasContainer!.qrMainContainer;
     const mainCanvasContext: WechatMiniprogram.CanvasContext = mainCanvas.getContext("2d");
 
@@ -599,7 +576,6 @@ export class AwesomeQR {
       const logoSize = viewportSize * logoScale;
       const x = 0.5 * (size - logoSize);
       const y = x;
-      // mainCanvasContext.save();
       AwesomeQR._prepareRoundedCornerClipReverse(
         mainCanvasContext,
         x - logoMargin - rawMargin,
@@ -610,8 +586,6 @@ export class AwesomeQR {
         size
       );
       mainCanvasContext.fill();
-      // return
-      // mainCanvasContext.globalCompositeOperation = "destination-over";
       mainCanvasContext.clip();
     }
 
@@ -767,8 +741,6 @@ export class AwesomeQR {
       }
     }
 
-    // mainCanvasContext.lineTo(1, 1, 10, 10)
-
     if (!!this.options.logoImage) {
       const logoImage = await loadImage(mainCanvas, this.options.logoImage!);
 
@@ -806,13 +778,11 @@ export class AwesomeQR {
       }).then(rsp => {
         reslove(rsp.tempFilePath)
       }).catch(err => {
-        console.error('canvasToTempFilePath 失败', err);
+        console.error(COMPONENT_NAME,'canvasToTempFilePath 失败', err);
         reject(err)
       })
     })
 
-
-    // Promise.resolve(this.canvas.toDataURL(format, 1));
   }
   getDataUrl(type: string = 'png', encoderOptions: number = 1) {
     return this.canvas.toDataURL(type, encoderOptions)
